@@ -19,10 +19,14 @@ public class GravitySpot : MonoBehaviour {
 
 	void OnTriggerStay(Collider coll) {
 		Rigidbody rigidbody = coll.gameObject.GetComponent<Rigidbody> ();
-		if (Mathf.Abs(rigidbody.velocity.x) > speedCutoff ||
-			Mathf.Abs(rigidbody.velocity.y) > speedCutoff ||
-			Mathf.Abs(rigidbody.velocity.z) > speedCutoff ) {
-			rigidbody.AddForce (Vector3.down * gravityFactor, ForceMode.Acceleration);
+		if (rigidbody == null) {
+			return; //if an object doesn't have a rigid body, ignore it.
+		} else {
+			if (Mathf.Abs (rigidbody.velocity.x) > speedCutoff ||
+			   Mathf.Abs (rigidbody.velocity.y) > speedCutoff ||
+			   Mathf.Abs (rigidbody.velocity.z) > speedCutoff) {
+				rigidbody.AddForce (Vector3.down * gravityFactor, ForceMode.Acceleration);
+			}
 		}
 	}
 		
