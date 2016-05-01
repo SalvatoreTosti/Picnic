@@ -7,17 +7,21 @@ public class Shoot : MonoBehaviour {
 	public Light muzzleFlash;
 	public float flashDuration = 0.05f; //how long muzzle flash stays 'on'
 	private float currentFlashDuration; //how long current muzzle flash has been 'on'
+	public Transform ejectionPort;
+	public float ejectionForce = 100.0f; //how much force casings are ejected with
+	private float ejectionX =0.0f;
+	private float ejectionY =0.5f;
+	private float ejectionZ =0.0f;
+	public GameObject casing;
 	public Transform muzzleLocation;
 	public int magazineCount = 10;
 
 
-	// Use this for initialization
 	void Start () {
 		animator = GetComponent<Animator>();
 		currentFlashDuration = flashDuration;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if (Input.GetButtonDown ("Fire1")) {
 			if (magazineCount > 0) {
@@ -26,18 +30,17 @@ public class Shoot : MonoBehaviour {
 				Reload ();
 			}
 		}
-		if (currentFlashDuration > flashDuration) {
-			muzzleFlash.enabled = false;
-		} else {
-			muzzleFlash.enabled = true;
-			currentFlashDuration += Time.deltaTime;
-		}
+		muzzleFlashHandler ();
 	}
 
 	private void Fire(){
-		Debug.Log ("Fired");
 		animator.SetTrigger ("Fired");
 		magazineCount--;
+		GameObject casingInstance = (GameObject) Instantiate (casing,ejectionPort.position,transform.rotation);
+		Vector3 randOffset = new Vector3 (Random.Range (0f, 0.1f), Random.Range (0f, 0.1f), Random.Range (0f, 0.1f));
+		Vector3 force = (transform.right + transform.up+randOffset) * ejectionForce;
+		casingInstance.GetComponent<Rigidbody> ().AddForce (force);
+	
 		if (magazineCount == 0) {
 			animator.SetTrigger ("MagazineEmpty");
 		}
@@ -53,8 +56,18 @@ public class Shoot : MonoBehaviour {
 		Debug.Log ("Reloaded");
 	}
 
+	private void muzzleFlashHandler(){
+		if (currentFlashDuration > flashDuration) {
+			muzzleFlash.enabled = false;
+		} else {
+			muzzleFlash.enabled = true;
+			currentFlashDuration += Time.deltaTime;
+		}
+	}
+
 	public void Flash(){
 		currentFlashDuration = 0.0f;
 		//Instantiate (muzzleFlash,muzzleLocation.position,transform.rotation);
 	}
+
 }
