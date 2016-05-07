@@ -4,6 +4,11 @@ using System.Collections;
 public class Shoot : MonoBehaviour {
 
 	private Animator animator;
+	public bool fullAuto;
+	public float roundsPerMinute = 60;
+	public float shotCooldown; //minimum time between shots
+	public float timeSinceLastShot; //time since last shot was fired
+
 	public Light muzzleFlash;
 	public float flashDuration = 0.05f; //how long muzzle flash stays 'on'
 	private float currentFlashDuration; //how long current muzzle flash has been 'on'
@@ -20,17 +25,34 @@ public class Shoot : MonoBehaviour {
 	void Start () {
 		animator = GetComponent<Animator>();
 		currentFlashDuration = flashDuration;
+		shotCooldown = calculateTimeBetweenShots ();
+		timeSinceLastShot = shotCooldown;
 	}
 
 	void Update () {
-		if (Input.GetButtonDown ("Fire1")) {
-			if (magazineCount > 0) {
-				Fire();
-			} else {
-				Reload ();
+		shotCooldown = calculateTimeBetweenShots ();
+
+		if (fullAuto) {
+			if (Input.GetButton ("Fire1") && CanFire()) {
+				if (magazineCount > 0) {
+					Fire ();
+					Flash ();
+				} else {
+					Reload ();
+				}
+			}
+		} else {
+			if (Input.GetButtonDown ("Fire1")) {
+				if (magazineCount > 0) {
+					Fire ();
+					Flash ();
+				} else {
+					Reload ();
+				}
 			}
 		}
 		muzzleFlashHandler ();
+		shotCooldownHandler ();
 	}
 
 	private void Fire(){
@@ -44,6 +66,16 @@ public class Shoot : MonoBehaviour {
 		if (magazineCount == 0) {
 			animator.SetTrigger ("MagazineEmpty");
 		}
+
+		timeSinceLastShot = 0.0f; //reset shot cooldown timer
+	}
+
+	private bool CanFire(){
+		return  timeSinceLastShot >= shotCooldown; //minimum time between shots has been met
+	}
+
+	private void shotCooldownHandler(){
+		timeSinceLastShot += Time.deltaTime;
 	}
 
 	private void Reload(){
@@ -70,4 +102,9 @@ public class Shoot : MonoBehaviour {
 		//Instantiate (muzzleFlash,muzzleLocation.position,transform.rotation);
 	}
 
+
+	private float calculateTimeBetweenShots(){
+		float roundsPerSecond = roundsPerMinute / 60.0f;
+		return shotCooldown = 1.0f / roundsPerSecond;
+	}
 }
