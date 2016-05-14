@@ -80,12 +80,13 @@ public class Shoot : MonoBehaviour {
 
 	private void Reload(){
 		Debug.Log ("Reloading");
-		animator.SetTrigger ("Reload");
+		animator.SetBool ("Reloading",true);
 	}
 
 	public void ReloadAdjust(){
 		magazineCount = 10;
 		Debug.Log ("Reloaded");
+		animator.SetBool ("Reloading",false);
 	}
 
 	private void muzzleFlashHandler(){
