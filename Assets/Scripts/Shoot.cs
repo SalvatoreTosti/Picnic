@@ -19,7 +19,9 @@ public class Shoot : MonoBehaviour {
 	private float ejectionZ =0.0f;
 	public GameObject casing;
 	public Transform muzzleLocation;
+	public int maxMagazingCount = 15;
 	public int magazineCount = 10;
+
 
 
 	void Start () {
@@ -58,10 +60,11 @@ public class Shoot : MonoBehaviour {
 	private void Fire(){
 		animator.SetTrigger ("Fired");
 		magazineCount--;
-		GameObject casingInstance = (GameObject) Instantiate (casing,ejectionPort.position,transform.rotation);
-		Vector3 randOffset = new Vector3 (Random.Range (0f, 0.1f), Random.Range (0f, 0.1f), Random.Range (0f, 0.1f));
+		GameObject casingInstance = (GameObject) Instantiate (casing,ejectionPort.position,Quaternion.Euler(90, 0, 90));
+		Vector3 randOffset = new Vector3 (Random.Range (0f, 0.5f), Random.Range (0f, 0.5f), Random.Range (0f, 0.5f));
 		Vector3 force = (transform.right + transform.up+randOffset) * ejectionForce;
 		casingInstance.GetComponent<Rigidbody> ().AddForce (force);
+		casingInstance.GetComponent<Rigidbody> ().AddTorque (Vector3.up * ejectionForce);//Random.Range (-200.0f, 200.0f));
 	
 		if (magazineCount == 0) {
 			animator.SetTrigger ("MagazineEmpty");
@@ -84,7 +87,7 @@ public class Shoot : MonoBehaviour {
 	}
 
 	public void ReloadAdjust(){
-		magazineCount = 10;
+		magazineCount = maxMagazingCount;
 		Debug.Log ("Reloaded");
 		animator.SetBool ("Reloading",false);
 	}
