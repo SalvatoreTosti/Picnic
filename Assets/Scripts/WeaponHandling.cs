@@ -3,7 +3,6 @@ using System.Collections;
 
 public class WeaponHandling : MonoBehaviour {
 	/* Handles picking up and putting down weapons. */
-	public bool holding = false;
 	public float speed = 100.0f;
 	public float pickupRadius = 2.0f;
 	public Transform SpawnLocation;
@@ -27,33 +26,24 @@ public class WeaponHandling : MonoBehaviour {
 				} else {
 					obj = child;
 				}
-				if (obj.tag == "Weapon" && !holding) {
+				if (obj.tag == "Weapon" && FirstPersonWeapon == null) {
 					GameObject weapon = (GameObject)Instantiate (
 						                    obj.GetComponent<Pickupable> ().FirstPersonPrefab, 
 						                    SpawnLocation.position,
 						                    SpawnLocation.rotation);
-											//new Vector3 (0, 0, 0),
-						                    //Quaternion.Euler (0, 0, 0));
-
-					//GameObject obj = (GameObject)Instantiate (HandGunPrefab, new Vector3 (0, 0, 0), Quaternion.Euler (0, 0, 0));
 					FirstPersonWeapon = weapon;
 					weapon.transform.parent = SpawnLocation;
-					print(weapon.transform.parent.gameObject.name);
-					print (weapon.transform.position);
-					print (weapon.name);
-					holding = true;
 					Destroy (obj); //destroy world copy of object
 				}
 			}
 		} else if (Input.GetButtonDown ("Fire3")) {
-			if (holding) {
+			if (FirstPersonWeapon != null) {
 				GameObject obj = (GameObject) Instantiate (
 					FirstPersonWeapon.GetComponent<Tossable> ().worldPrefab,
 					transform.position,
 					transform.rotation);
 				obj.GetComponent<Rigidbody> ().AddForce (transform.forward * speed);
 				Destroy (FirstPersonWeapon);
-				holding = false;
 			}
 		} else {
 			
