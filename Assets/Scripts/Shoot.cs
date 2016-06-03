@@ -12,6 +12,7 @@ public class Shoot : MonoBehaviour {
 	public Light muzzleFlash;
 	public float flashDuration = 0.05f; //how long muzzle flash stays 'on'
 	private float currentFlashDuration; //how long current muzzle flash has been 'on'
+	public bool ejectOnShot = true;
 	public Transform ejectionPort;
 	public float ejectionForce = 100.0f; //how much force casings are ejected with
 	private float ejectionX =0.0f;
@@ -19,7 +20,7 @@ public class Shoot : MonoBehaviour {
 	private float ejectionZ =0.0f;
 	public GameObject casing;
 	public Transform muzzleLocation;
-	public int maxMagazingCount = 15;
+	public int maxMagazineCount = 15;
 	public int magazineCount = 10;
 
 
@@ -60,12 +61,14 @@ public class Shoot : MonoBehaviour {
 	private void Fire(){
 		animator.SetTrigger ("Fired");
 		magazineCount--;
-		GameObject casingInstance = (GameObject) Instantiate (casing,ejectionPort.position,Quaternion.Euler(90, 0, 90));
-		Vector3 randOffset = new Vector3 (Random.Range (0f, 0.5f), Random.Range (0f, 0.5f), Random.Range (0f, 0.5f));
-		Vector3 force = (transform.right + transform.up+randOffset) * ejectionForce;
-		casingInstance.GetComponent<Rigidbody> ().AddForce (force);
-		casingInstance.GetComponent<Rigidbody> ().AddTorque (Vector3.up * ejectionForce);//Random.Range (-200.0f, 200.0f));
-	
+		if(ejectOnShot){
+			GameObject casingInstance = (GameObject) Instantiate (casing,ejectionPort.position,Quaternion.Euler(90, 0, 90));
+			Vector3 randOffset = new Vector3 (Random.Range (0f, 0.5f), Random.Range (0f, 0.5f), Random.Range (0f, 0.5f));
+			Vector3 force = (transform.right + transform.up+randOffset) * ejectionForce;
+			casingInstance.GetComponent<Rigidbody> ().AddForce (force);
+			casingInstance.GetComponent<Rigidbody> ().AddTorque (Vector3.up * ejectionForce);//Random.Range (-200.0f, 200.0f));
+		}
+
 		if (magazineCount == 0) {
 			animator.SetTrigger ("MagazineEmpty");
 		}
@@ -87,7 +90,7 @@ public class Shoot : MonoBehaviour {
 	}
 
 	public void ReloadAdjust(){
-		magazineCount = maxMagazingCount;
+		magazineCount = maxMagazineCount;
 		Debug.Log ("Reloaded");
 		animator.SetBool ("Reloading",false);
 	}
