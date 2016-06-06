@@ -69,10 +69,6 @@ public class Shoot : MonoBehaviour {
 			casingInstance.GetComponent<Rigidbody> ().AddTorque (Vector3.up * ejectionForce);//Random.Range (-200.0f, 200.0f));
 		}
 
-		if (magazineCount == 0) {
-			animator.SetTrigger ("MagazineEmpty");
-		}
-
 		timeSinceLastShot = 0.0f; //reset shot cooldown timer
 	}
 

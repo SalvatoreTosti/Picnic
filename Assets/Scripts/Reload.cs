@@ -12,6 +12,7 @@ public class Reload : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetButton ("Reload")) {
+			GetComponent<Shoot> ().magazineCount = 0;
 			ReloadWeapon ();
 		}
 	}
