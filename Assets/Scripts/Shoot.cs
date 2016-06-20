@@ -20,6 +20,8 @@ public class Shoot : MonoBehaviour {
 	private float ejectionZ =0.0f;
 	public GameObject casing;
 	public Transform muzzleLocation;
+	public GameObject bullet ;
+	public float initialBulletForce = 100.0f;
 	public int maxMagazineCount = 15;
 	public int magazineCount = 10;
 
@@ -60,6 +62,8 @@ public class Shoot : MonoBehaviour {
 
 	private void Fire(){
 		animator.SetTrigger ("Fired");
+		GameObject bulletInstance = (GameObject) Instantiate (bullet,muzzleLocation.position,muzzleLocation.rotation);
+		bulletInstance.GetComponent<Rigidbody> ().AddForce (muzzleLocation.forward *initialBulletForce);
 		magazineCount--;
 		if(ejectOnShot){
 			GameObject casingInstance = (GameObject) Instantiate (casing,ejectionPort.position,Quaternion.Euler(90, 0, 90));
