@@ -25,6 +25,8 @@ public class Shoot : MonoBehaviour {
 	public int maxMagazineCount = 15;
 	public int magazineCount = 10;
 
+	public BulletCount GUIBulletCount;
+
 
 
 	void Start () {
@@ -32,6 +34,15 @@ public class Shoot : MonoBehaviour {
 		currentFlashDuration = flashDuration;
 		shotCooldown = calculateTimeBetweenShots ();
 		timeSinceLastShot = shotCooldown;
+		GUIBulletCount = getBulletCountGUI ();
+
+	}
+
+	private BulletCount getBulletCountGUI(){
+		//This is a very hack-ey method for obtaining the associated GUI element.
+		//It will need to be revisisted at a later time.
+		GameObject GUIObject = GameObject.FindGameObjectWithTag ("GUI");
+		return  GUIObject.GetComponentInChildren<BulletCount> ();
 	}
 
 	void Update () {
@@ -58,6 +69,8 @@ public class Shoot : MonoBehaviour {
 		}
 		muzzleFlashHandler ();
 		shotCooldownHandler ();
+
+		GUIBulletCount.setCurrentBullets (magazineCount);
 	}
 
 	private void Fire(){
